@@ -1,0 +1,36 @@
+name: Build and Deploy to Docker Hub
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Robot lấy code mới nhất của bạn về máy chủ của GitHub
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Bước 2: Đăng nhập vào Docker Hub bằng chìa khóa (Secrets) bạn đã tạo
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Bước 3: Cài đặt công cụ Buildx (Chuẩn mới nhất của Docker giúp build nhanh và mượt hơn)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Bước 4: Ra lệnh Build image từ Dockerfile và đẩy (Push) thẳng lên Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # Gắn 2 cái tag: 1 cái là latest, 1 cái là mã commit để dễ quản lý phiên bản
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/portfolio-backend:latest
+            ${{ secrets.DOCKER_USERNAME }}/portfolio-backend:${{ github.sha }}
