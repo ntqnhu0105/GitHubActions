@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: portfolio-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://ntqnhu0105:Kin%40010504@my-portfolio.zlmjhva.mongodb.net/?appName=my-portfolio
